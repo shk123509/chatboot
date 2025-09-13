@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FarmAssist - Contact</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>FarmAssist</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/profile.html">Profile</a>
+      <a href="/login.html">Login</a>
+      <a href="/signup.html">Signup</a>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Contact Us</h2>
+      <form id="contactForm">
+        <input name="name" placeholder="Your Name" required />
+        <input name="email" type="email" placeholder="Email" required />
+        <input name="subject" placeholder="Subject" required />
+        <textarea name="message" placeholder="Message" required></textarea>
+        <button type="submit">Send</button>
+      </form>
+      <p id="msg"></p>
+    </section>
+  </main>
+  <script>
+    document.getElementById('contactForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const payload = {
+        name: form.name.value,
+        email: form.email.value,
+        subject: form.subject.value,
+        message: form.message.value
+      };
+      const res = await fetch('/api/contact/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      document.getElementById('msg').textContent = data.message || (data.success ? 'Sent!' : 'Failed');
+      if (data.success) form.reset();
+    };
+  </script>
+</body>
+</html>

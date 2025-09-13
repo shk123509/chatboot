@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Authentication Test - FarmAssist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .test-section h2 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 1), rgba(118, 75, 162, 1));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, rgba(76, 205, 196, 0.8), rgba(52, 172, 224, 0.8));
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, rgba(76, 205, 196, 1), rgba(52, 172, 224, 1));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(76, 205, 196, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.8), rgba(255, 138, 101, 0.8));
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.8), rgba(238, 90, 82, 0.8));
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            word-wrap: break-word;
+            animation: resultSlideIn 0.5s ease;
+        }
+
+        @keyframes resultSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, rgba(76, 205, 196, 0.3), rgba(52, 172, 224, 0.3));
+            border: 2px solid rgba(76, 205, 196, 0.5);
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(238, 90, 82, 0.3));
+            border: 2px solid rgba(255, 107, 107, 0.5);
+        }
+
+        .result h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status.online {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+        }
+
+        .status.offline {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .form-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Authentication Test Dashboard</h1>
+        
+        <div class="test-section">
+            <h2>🏥 Backend Health Check</h2>
+            <div class="button-group">
+                <button class="btn-primary" onclick="testHealth()">
+                    🩺 Check Backend Status
+                </button>
+            </div>
+            <div id="health-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 User Registration</h2>
+            <div class="form-group">
+                <input type="text" id="signup-name" placeholder="👤 Full Name" value="John Farmer">
+                <input type="email" id="signup-email" placeholder="📧 Email Address" value="john.farmer@test.com">
+                <input type="password" id="signup-password" placeholder="🔒 Password" value="farmpass123">
+            </div>
+            <div class="button-group">
+                <button class="btn-success" onclick="testSignup()">
+                    🚀 Create Account
+                </button>
+            </div>
+            <div id="signup-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔑 User Login</h2>
+            <div class="form-group">
+                <input type="email" id="login-email" placeholder="📧 Email Address" value="john.farmer@test.com">
+                <input type="password" id="login-password" placeholder="🔒 Password" value="farmpass123">
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="testLogin()">
+                    🔐 Sign In
+                </button>
+            </div>
+            <div id="login-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🛠️ Quick Actions</h2>
+            <div class="button-group">
+                <button class="btn-warning" onclick="clearResults()">
+                    🧹 Clear All Results
+                </button>
+                <button class="btn-success" onclick="runFullTest()">
+                    🔄 Run Full Test Suite
+                </button>
+                <button class="btn-primary" onclick="window.open('http://localhost:3001', '_blank')">
+                    🌐 Open Main App
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        function addResult(containerId, title, content, isError = false, status = null) {
+            const container = document.getElementById(containerId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${isError ? 'error' : 'success'}`;
+            
+            const statusBadge = status ? `<span class="status ${status}">${status.toUpperCase()}</span>` : '';
+            
+            resultDiv.innerHTML = `
+                <h3>
+                    ${isError ? '❌' : '✅'} ${title}
+                    ${statusBadge}
+                </h3>
+                <pre>${JSON.stringify(content, null, 2)}</pre>
+            `;
+            container.appendChild(resultDiv);
+        }
+
+        function clearResults() {
+            ['health-result', 'signup-result', 'login-result'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+        }
+
+        async function testHealth() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                addResult('health-result', 'Backend Health Check', {
+                    status: 'Server is running',
+                    uptime: `${Math.floor(data.uptime)} seconds`,
+                    timestamp: new Date(data.timestamp).toLocaleString(),
+                    api_url: API_URL
+                }, false, 'online');
+            } catch (error) {
+                addResult('health-result', 'Backend Health Check Failed', {
+                    error: error.message,
+                    api_url: API_URL,
+                    suggestion: 'Make sure backend server is running on port 5000'
+                }, true, 'offline');
+            }
+        }
+
+        async function testSignup() {
+            try {
+                const signupData = {
+                    name: document.getElementById('signup-name').value,
+                    email: document.getElementById('signup-email').value,
+                    password: document.getElementById('signup-password').value
+                };
+
+                const response = await fetch(`${API_URL}/api/auth/createuser`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(signupData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    addResult('signup-result', 'Account Created Successfully', {
+                        success: data.success,
+                        message: data.message,
+                        user: {
+                            id: data.user.id,
+                            name: data.user.name,
+                            email: data.user.email
+                        },
+                        token_preview: data.authtoken ? data.authtoken.substring(0, 20) + '...' : 'No token'
+                    });
+                    
+                    // Auto-fill login form
+                    document.getElementById('login-email').value = signupData.email;
+                    document.getElementById('login-password').value = signupData.password;
+                } else {
+                    addResult('signup-result', 'Signup Failed', {
+                        success: data.success,
+                        message: data.message,
+                        errors: data.errors
+                    }, true);
+                }
+            } catch (error) {
+                addResult('signup-result', 'Signup Request Failed', {
+                    error: error.message,
+                    suggestion: 'Check network connection and backend server'
+                }, true);
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const loginData = {
+                    email: document.getElementById('login-email').value,
+                    password: document.getElementById('login-password').value
+                };
+
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    addResult('login-result', 'Login Successful', {
+                        success: data.success,
+                        message: data.message,
+                        user: {
+                            id: data.user.id,
+                            name: data.user.name,
+                            email: data.user.email
+                        },
+                        token_preview: data.authtoken ? data.authtoken.substring(0, 20) + '...' : 'No token'
+                    });
+                } else {
+                    addResult('login-result', 'Login Failed', {
+                        success: data.success,
+                        message: data.message,
+                        status: response.status
+                    }, true);
+                }
+            } catch (error) {
+                addResult('login-result', 'Login Request Failed', {
+                    error: error.message,
+                    suggestion: 'Check network connection and backend server'
+                }, true);
+            }
+        }
+
+        async function runFullTest() {
+            clearResults();
+            
+            // Add random suffix to email to avoid conflicts
+            const randomSuffix = Math.floor(Math.random() * 1000);
+            document.getElementById('signup-email').value = `test.user.${randomSuffix}@farmassist.com`;
+            document.getElementById('login-email').value = `test.user.${randomSuffix}@farmassist.com`;
+            
+            await testHealth();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await testSignup();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await testLogin();
+        }
+
+        // Auto-run health check on load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 500);
+        });
+    </script>
+</body>
+</html>
