@@ -270,4 +270,144 @@ router.put('/changepassword', fetchuser, [
     }
 });
 
+// ROUTE 7: Request password reset using: POST "/api/auth/forgot-password". No login required
+router.post('/forgot-password', [
+    body('email', 'Enter a valid email').isEmail(),
+], async (req, res) => {
+    let success = false;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ success, message: 'Please enter a valid email address', errors: errors.array() });
+    }
+    
+    try {
+        const { email } = req.body;
+        
+        // Check if user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ success, message: 'No account found with this email address' });
+        }
+        
+        // Generate 6-digit verification code
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        // Store verification code temporarily (in production, use Redis or database)
+        // For now, we'll store it in memory (not recommended for production)
+        global.resetCodes = global.resetCodes || {};
+        global.resetCodes[email] = {
+            code: verificationCode,
+            expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+            userId: user.id
+        };
+        
+        // In production, send email with verification code
+        // For development, we'll log it to console
+        console.log(`🔑 Password reset code for ${email}: ${verificationCode}`);
+        
+        success = true;
+        res.json({ 
+            success, 
+            message: 'Password reset code sent to your email',
+            // In development, include the code for testing
+            devCode: verificationCode // Always show for testing
+        });
+        
+    } catch (error) {
+        console.error('Forgot password error:', error.message);
+        res.status(500).json({ success: false, message: 'Server error occurred. Please try again later.' });
+    }
+});
+
+// ROUTE 8: Verify reset code using: POST "/api/auth/verify-reset-code". No login required
+router.post('/verify-reset-code', [
+    body('email', 'Enter a valid email').isEmail(),
+    body('code', 'Enter verification code').isLength({ min: 6, max: 6 }),
+], async (req, res) => {
+    let success = false;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ success, message: 'Invalid input', errors: errors.array() });
+    }
+    
+    try {
+        const { email, code } = req.body;
+        
+        // Check if reset code exists and is valid
+        global.resetCodes = global.resetCodes || {};
+        const resetData = global.resetCodes[email];
+        
+        if (!resetData) {
+            return res.status(400).json({ success, message: 'No reset request found for this email' });
+        }
+        
+        if (resetData.expires < Date.now()) {
+            delete global.resetCodes[email];
+            return res.status(400).json({ success, message: 'Verification code has expired. Please request a new one.' });
+        }
+        
+        if (resetData.code !== code) {
+            return res.status(400).json({ success, message: 'Invalid verification code' });
+        }
+        
+        success = true;
+        res.json({ success, message: 'Verification code confirmed' });
+        
+    } catch (error) {
+        console.error('Verify reset code error:', error.message);
+        res.status(500).json({ success: false, message: 'Server error occurred. Please try again later.' });
+    }
+});
+
+// ROUTE 9: Reset password using: POST "/api/auth/reset-password". No login required
+router.post('/reset-password', [
+    body('email', 'Enter a valid email').isEmail(),
+    body('code', 'Enter verification code').isLength({ min: 6, max: 6 }),
+    body('newPassword', 'Password must be at least 5 characters').isLength({ min: 5 }),
+], async (req, res) => {
+    let success = false;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ success, message: 'Invalid input', errors: errors.array() });
+    }
+    
+    try {
+        const { email, code, newPassword } = req.body;
+        
+        // Verify reset code again
+        global.resetCodes = global.resetCodes || {};
+        const resetData = global.resetCodes[email];
+        
+        if (!resetData || resetData.code !== code || resetData.expires < Date.now()) {
+            return res.status(400).json({ success, message: 'Invalid or expired verification code' });
+        }
+        
+        // Find user and update password
+        const user = await User.findById(resetData.userId);
+        if (!user) {
+            return res.status(404).json({ success, message: 'User not found' });
+        }
+        
+        // Hash new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+        
+        // Update user's password
+        await User.findByIdAndUpdate(user.id, {
+            password: hashedPassword,
+            lastActive: Date.now()
+        });
+        
+        // Clear the reset code
+        delete global.resetCodes[email];
+        
+        success = true;
+        res.json({ success, message: 'Password has been reset successfully' });
+        
+    } catch (error) {
+        console.error('Reset password error:', error.message);
+        res.status(500).json({ success: false, message: 'Server error occurred. Please try again later.' });
+    }
+});
+
 module.exports = router;

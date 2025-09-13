@@ -298,6 +298,22 @@
         </div>
 
         <div class="test-section">
+            <h2>🔄 Password Reset Test</h2>
+            <div class="form-group">
+                <input type="email" id="reset-email" placeholder="📧 Email for Password Reset" value="testuser@example.com">
+            </div>
+            <div class="button-group">
+                <button class="btn-warning" onclick="testPasswordReset()">
+                    🔑 Test Full Password Reset Flow
+                </button>
+                <button class="btn-primary" onclick="testChangePassword()">
+                    🔄 Test Password Change (Logged In)
+                </button>
+            </div>
+            <div id="password-reset-result"></div>
+        </div>
+
+        <div class="test-section">
             <h2>🛠️ Quick Actions</h2>
             <div class="button-group">
                 <button class="btn-warning" onclick="clearResults()">
@@ -305,6 +321,9 @@
                 </button>
                 <button class="btn-success" onclick="runFullTest()">
                     🔄 Run Full Test Suite
+                </button>
+                <button class="btn-primary" onclick="window.open('http://localhost:3001/settings', '_blank')">
+                    ⚙️ Open Settings Page
                 </button>
                 <button class="btn-primary" onclick="window.open('http://localhost:3001', '_blank')">
                     🌐 Open Main App
@@ -334,7 +353,7 @@
         }
 
         function clearResults() {
-            ['health-result', 'signup-result', 'login-result'].forEach(id => {
+            ['health-result', 'signup-result', 'login-result', 'password-reset-result'].forEach(id => {
                 document.getElementById(id).innerHTML = '';
             });
         }
@@ -462,6 +481,142 @@
             await testSignup();
             await new Promise(resolve => setTimeout(resolve, 1000));
             await testLogin();
+        }
+
+        async function testPasswordReset() {
+            const email = document.getElementById('reset-email').value;
+            let currentStep = 1;
+            
+            try {
+                // Step 1: Request reset code
+                addResult('password-reset-result', `Step ${currentStep++}: Requesting Reset Code`, { email: email });
+                const resetResponse = await fetch(`${API_URL}/api/auth/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                const resetData = await resetResponse.json();
+                
+                if (!resetResponse.ok) throw new Error(resetData.message);
+                
+                const verificationCode = resetData.devCode;
+                addResult('password-reset-result', '✅ Step 1 Complete', { 
+                    message: resetData.message,
+                    verificationCode: verificationCode
+                });
+                
+                // Step 2: Verify code
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                addResult('password-reset-result', `Step ${currentStep++}: Verifying Code`, { code: verificationCode });
+                
+                const verifyResponse = await fetch(`${API_URL}/api/auth/verify-reset-code`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, code: verificationCode })
+                });
+                const verifyData = await verifyResponse.json();
+                
+                if (!verifyResponse.ok) throw new Error(verifyData.message);
+                
+                addResult('password-reset-result', '✅ Step 2 Complete', { message: verifyData.message });
+                
+                // Step 3: Reset password
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const newPassword = 'newpass123';
+                addResult('password-reset-result', `Step ${currentStep++}: Resetting Password`, { newPassword: '***hidden***' });
+                
+                const resetPasswordResponse = await fetch(`${API_URL}/api/auth/reset-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: email, 
+                        code: verificationCode, 
+                        newPassword: newPassword 
+                    })
+                });
+                const resetPasswordData = await resetPasswordResponse.json();
+                
+                if (!resetPasswordResponse.ok) throw new Error(resetPasswordData.message);
+                
+                addResult('password-reset-result', '✅ Step 3 Complete', { message: resetPasswordData.message });
+                
+                // Step 4: Test login with new password
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                addResult('password-reset-result', `Step ${currentStep++}: Testing New Password`, { email: email });
+                
+                const testLoginResponse = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: newPassword })
+                });
+                const testLoginData = await testLoginResponse.json();
+                
+                if (!testLoginResponse.ok) throw new Error(testLoginData.message);
+                
+                addResult('password-reset-result', '🎉 Password Reset Flow Complete!', {
+                    message: 'All steps completed successfully',
+                    finalLogin: {
+                        success: testLoginData.success,
+                        user: testLoginData.user.name,
+                        email: testLoginData.user.email
+                    }
+                });
+                
+            } catch (error) {
+                addResult('password-reset-result', `❌ Step ${currentStep} Failed`, {
+                    error: error.message,
+                    step: `Step ${currentStep}`
+                }, true);
+            }
+        }
+        
+        async function testChangePassword() {
+            try {
+                // First, login to get a token
+                const loginResponse = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: 'testuser@example.com', 
+                        password: 'newpass123' // Current password from reset test
+                    })
+                });
+                const loginData = await loginResponse.json();
+                
+                if (!loginResponse.ok) {
+                    throw new Error('Please run password reset test first or login manually');
+                }
+                
+                const token = loginData.authtoken;
+                
+                // Test password change API
+                const changeResponse = await fetch(`${API_URL}/api/auth/changepassword`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'auth-token': token
+                    },
+                    body: JSON.stringify({
+                        currentPassword: 'newpass123',
+                        newPassword: 'changedpass123'
+                    })
+                });
+                const changeData = await changeResponse.json();
+                
+                if (!changeResponse.ok) throw new Error(changeData.error);
+                
+                addResult('password-reset-result', '✅ Password Change Test', {
+                    success: changeData.success,
+                    message: changeData.message,
+                    note: 'Password changed from newpass123 to changedpass123'
+                });
+                
+            } catch (error) {
+                addResult('password-reset-result', '❌ Password Change Test Failed', {
+                    error: error.message,
+                    suggestion: 'Make sure you are logged in or run the full test suite first'
+                }, true);
+            }
         }
 
         // Auto-run health check on load

@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 import CropSearch from './pages/CropSearch';
 import Debug from './pages/Debug';
+import Settings from './pages/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -113,6 +114,11 @@ function App() {
           <Route path="/profile" element={
             <ProtectedRoute user={user}>
               <Profile user={user} setUser={setUser} />
+            </ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute user={user}>
+              <Settings user={user} />
             </ProtectedRoute>
           } />
           <Route path="/chat" element={

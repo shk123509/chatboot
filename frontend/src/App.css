@@ -28,8 +28,8 @@
 
 /* Main Content */
 .main-content {
-  padding: 0;
-  min-height: calc(100vh - 64px);
+  padding-top: 80px; /* Account for navbar height */
+  min-height: calc(100vh - 80px);
   position: relative;
   animation: fadeIn 0.8s ease-out;
 }
@@ -144,7 +144,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-content {
-    padding: 0;
+    padding-top: 80px; /* Keep same padding on mobile */
   }
   
   .loading-container {
@@ -160,6 +160,12 @@
   .spinner::after {
     width: 16px;
     height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 70px; /* Adjust for smaller navbar on very small screens */
   }
 }
 
