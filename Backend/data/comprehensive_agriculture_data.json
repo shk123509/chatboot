@@ -1,0 +1,83 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "total_entries": 250,
+    "languages": ["english", "hindi", "urdu"],
+    "categories": [
+      "crop_growth",
+      "soil_management", 
+      "irrigation",
+      "pest_control",
+      "fertilizers",
+      "diseases",
+      "seeds",
+      "harvesting",
+      "weather",
+      "market_prices"
+    ]
+  },
+  "crop_growth": [
+    {
+      "id": "cg_001",
+      "question": "Why is my fasal not growing?",
+      "keywords": ["fasal", "growth", "not growing", "crop", "slow"],
+      "answer": "🌱 **Crop Growth Issues - Detailed Analysis:**\n\n**Common Reasons for Slow Growth:**\n\n1. **Soil Problems (70% of cases):**\n   • Poor drainage - waterlogged roots can't breathe\n   • Wrong pH (test with litmus paper) - should be 6.0-7.0\n   • Compacted soil - roots can't penetrate\n   • Lack of organic matter - soil has no nutrients\n\n2. **Nutrition Deficiency:**\n   • Nitrogen deficiency → yellowing leaves, slow growth\n   • Phosphorus deficiency → purple/red leaves, poor roots\n   • Potassium deficiency → brown leaf edges, weak stems\n   • **Solution:** Apply NPK 10:10:10 or organic compost\n\n3. **Water Issues:**\n   • Overwatering → roots rot, plant wilts\n   • Underwatering → leaves curl, growth stops\n   • **Test:** Stick finger 2-3 inches in soil\n   • **Fix:** Water deeply once vs. shallow daily watering\n\n4. **Environmental Stress:**\n   • Insufficient sunlight (needs 6-8 hours daily)\n   • Temperature stress (too hot/cold)\n   • Wind damage\n   • Transplant shock\n\n**Immediate Actions:**\n1. Check soil drainage - add sand if waterlogged\n2. Apply organic compost (2-3 inches)\n3. Test and adjust watering schedule\n4. Ensure adequate sunlight\n5. Look for pest damage on roots/stems\n\n**Recovery Timeline:** 2-3 weeks for visible improvement",
+      "category": "crop_growth",
+      "confidence": 0.95,
+      "language": "english"
+    },
+    {
+      "id": "cg_002",
+      "question": "How to make plants grow faster?",
+      "keywords": ["grow faster", "quick growth", "speed up growth"],
+      "answer": "🚀 **Accelerate Plant Growth - Proven Methods:**\n\n**1. Optimize Nutrition (Most Important):**\n   • Use balanced NPK fertilizer (20:20:20 for fast growth)\n   • Add organic matter: compost, vermicompost\n   • Foliar feeding: spray liquid fertilizer on leaves\n   • Micronutrients: iron, zinc, magnesium\n\n**2. Perfect Watering:**\n   • Deep watering 2-3 times per week\n   • Consistent moisture (not wet, not dry)\n   • Use mulch to retain moisture\n   • Water early morning for best absorption\n\n**3. Soil Enhancement:**\n   • Loose, well-draining soil\n   • pH 6.0-7.0 (test and adjust)\n   • Add perlite or sand for drainage\n   • Regular organic matter addition\n\n**4. Environmental Optimization:**\n   • Maximum sunlight exposure\n   • Proper spacing for air circulation\n   • Protection from harsh weather\n   • Optimal temperature range\n\n**5. Growth Boosters:**\n   • Seaweed extract (natural growth hormone)\n   • Epsom salt (magnesium sulfate) monthly\n   • Pruning to redirect energy\n   • Remove competing weeds\n\n**6. Advanced Techniques:**\n   • Companion planting\n   • Crop rotation benefits\n   • Beneficial bacteria (rhizobium)\n   • CO2 enhancement (for greenhouse)\n\n**Expected Results:** 30-50% faster growth with proper implementation",
+      "category": "crop_growth",
+      "confidence": 0.92,
+      "language": "english"
+    }
+  ],
+  "soil_management": [
+    {
+      "id": "sm_001",
+      "question": "How to improve soil quality?",
+      "keywords": ["soil quality", "improve soil", "soil health", "mitti"],
+      "answer": "🌍 **Complete Soil Improvement Guide:**\n\n**1. Soil Testing (Essential First Step):**\n   • pH testing with litmus paper or meter\n   • Nutrient analysis (N-P-K levels)\n   • Organic matter content\n   • Drainage test (dig 12-inch hole, fill with water)\n\n**2. pH Correction:**\n   • If too acidic (pH < 6): Add lime or wood ash\n   • If too alkaline (pH > 7.5): Add sulfur or peat moss\n   • Target pH: 6.0-7.0 for most crops\n\n**3. Organic Matter Addition (Most Important):**\n   • Compost: 2-4 inches annually\n   • Well-rotted manure: cow, goat, chicken\n   • Leaf mold: decomposed leaves\n   • Green manure: grow and till cover crops\n\n**4. Structure Improvement:**\n   • Add coarse sand to clay soil\n   • Add clay or compost to sandy soil\n   • Never work wet clay soil\n   • Create raised beds if drainage is poor\n\n**5. Biological Enhancement:**\n   • Beneficial bacteria and fungi\n   • Earthworms (nature's soil mixers)\n   • Mycorrhizal fungi inoculation\n   • Avoid chemical pesticides that harm soil life\n\n**6. Nutrient Management:**\n   • Slow-release organic fertilizers\n   • Crop rotation to prevent depletion\n   • Cover crops during off-season\n   • Minimal tillage to preserve structure\n\n**Timeline:** 3-6 months for noticeable improvement, 2-3 years for complete transformation",
+      "category": "soil_management",
+      "confidence": 0.98,
+      "language": "english"
+    }
+  ],
+  "irrigation": [
+    {
+      "id": "ir_001",
+      "question": "How much water do crops need?",
+      "keywords": ["water requirement", "irrigation", "watering", "paani"],
+      "answer": "💧 **Crop Water Requirements - Complete Guide:**\n\n**General Water Needs by Crop Type:**\n\n**High Water Crops (4-6 inches/week):**\n   • Rice: 5-6 inches weekly\n   • Sugarcane: 4-5 inches weekly\n   • Banana: 4-5 inches weekly\n\n**Medium Water Crops (2-4 inches/week):**\n   • Corn/Maize: 2-3 inches weekly\n   • Wheat: 2-3 inches weekly\n   • Cotton: 2-3 inches weekly\n   • Vegetables: 2-4 inches weekly\n\n**Low Water Crops (1-2 inches/week):**\n   • Millets: 1-2 inches weekly\n   • Sorghum: 1-2 inches weekly\n   • Sunflower: 1.5-2 inches weekly\n\n**Watering Schedule by Growth Stage:**\n\n**1. Germination Stage:** Light, frequent watering\n   • Keep soil moist but not waterlogged\n   • Water daily with light spray\n\n**2. Vegetative Growth:** Deep, less frequent\n   • Water 2-3 times per week\n   • Soak to 6-8 inch depth\n\n**3. Flowering/Fruiting:** Consistent moisture\n   • Most critical period\n   • Never let soil dry completely\n   • Increase frequency, not amount\n\n**4. Maturity:** Reduce watering\n   • Gradually decrease water\n   • Stop 1-2 weeks before harvest\n\n**Water Quality Factors:**\n   • pH should be 6.0-8.0\n   • Low salt content\n   • Free from chemicals\n   • Temperature close to soil temperature\n\n**Efficiency Tips:**\n   • Water early morning (6-8 AM)\n   • Use drip irrigation (90% efficiency)\n   • Mulch to reduce evaporation\n   • Check soil moisture before watering",
+      "category": "irrigation",
+      "confidence": 0.94,
+      "language": "english"
+    }
+  ],
+  "pest_control": [
+    {
+      "id": "pc_001", 
+      "question": "How to control pests naturally?",
+      "keywords": ["pest control", "organic pest control", "natural pesticide", "kira"],
+      "answer": "🐛 **Natural Pest Control - Comprehensive Guide:**\n\n**1. Prevention (Best Strategy):**\n   • Healthy soil = healthy plants = pest resistance\n   • Proper spacing for air circulation\n   • Crop rotation breaks pest cycles\n   • Companion planting (marigold, basil, neem)\n   • Remove crop debris and weeds\n\n**2. Biological Control:**\n   • **Beneficial Insects:**\n     - Ladybugs for aphids\n     - Lacewings for soft-bodied pests\n     - Parasitic wasps for caterpillars\n     - Spiders for various insects\n   • **Encourage birds:** Install bird houses\n   • **Beneficial nematodes:** Control soil pests\n\n**3. Natural Sprays (DIY Recipes):**\n\n   **Neem Oil Spray:**\n   • 2 tbsp neem oil + 1 tbsp mild soap + 1 liter water\n   • Spray evening time, repeat weekly\n   • Controls aphids, whiteflies, thrips\n\n   **Garlic-Chili Spray:**\n   • 6 garlic cloves + 2 hot peppers + 1 tbsp soap + 1 liter water\n   • Blend, strain, spray on affected areas\n   • Repels most soft-bodied insects\n\n   **Soap Solution:**\n   • 2 tbsp mild dish soap + 1 liter water\n   • Test on few leaves first\n   • Effective against aphids, spider mites\n\n   **Diatomaceous Earth:**\n   • Food-grade DE around plants\n   • Controls crawling insects\n   • Reapply after rain\n\n**4. Physical Barriers:**\n   • Row covers for young plants\n   • Sticky yellow traps for flying insects\n   • Copper strips for slugs and snails\n   • Mulch to prevent soil-dwelling pests\n\n**5. Organic-Approved Products:**\n   • Bt (Bacillus thuringiensis) for caterpillars\n   • Spinosad for various insects\n   • Pyrethrin from chrysanthemums\n   • Kaolin clay as protective coating\n\n**Application Tips:**\n   • Spray early morning or evening\n   • Cover both sides of leaves\n   • Rotate different methods\n   • Monitor weekly for effectiveness\n   • Stop treatments 3-7 days before harvest\n\n**Success Rate:** 80-90% effective with consistent application",
+      "category": "pest_control", 
+      "confidence": 0.96,
+      "language": "english"
+    }
+  ],
+  "fertilizers": [
+    {
+      "id": "fert_001",
+      "question": "What fertilizer is best for vegetables?",
+      "keywords": ["vegetable fertilizer", "best fertilizer", "khad", "nutrition"],
+      "answer": "🌿 **Best Fertilizers for Vegetables - Complete Guide:**\n\n**1. Organic Fertilizers (Recommended):**\n\n   **Compost (The Gold Standard):**\n   • NPK: 1-1-1 (slow release)\n   • Apply: 2-4 inches thick\n   • Benefits: Improves soil structure, retains moisture\n   • Cost: Free if homemade\n\n   **Well-Rotted Manure:**\n   • Cow manure: NPK 0.6-0.2-0.5\n   • Chicken manure: NPK 1.1-0.8-0.5 (stronger)\n   • Apply: 2-3 inches, aged 6+ months\n   • Benefits: Long-lasting nutrition\n\n   **Vermicompost (Worm Castings):**\n   • NPK: 1-0.5-0.3 + micronutrients\n   • Apply: 1-2 inches or as tea\n   • Benefits: Excellent for seedlings\n\n**2. Synthetic Fertilizers (Quick Results):**\n\n   **Balanced NPK for General Use:**\n   • 10-10-10 or 20-20-20\n   • Apply: Follow package directions\n   • Frequency: Every 4-6 weeks\n\n   **High Nitrogen for Leafy Greens:**\n   • 21-0-0 or similar\n   • For: Spinach, lettuce, cabbage\n   • Apply: Every 2-3 weeks, light application\n\n   **High Phosphorus for Root Vegetables:**\n   • 5-20-10 or similar  \n   • For: Carrots, potatoes, onions\n   • Apply: At planting and mid-season\n\n   **High Potassium for Fruiting Vegetables:**\n   • 8-8-16 or similar\n   • For: Tomatoes, peppers, cucumbers\n   • Apply: When flowers appear\n\n**3. Liquid Fertilizers:**\n   • Fish emulsion: NPK 5-1-1\n   • Kelp meal: High in micronutrients\n   • Compost tea: Gentle, frequent feeding\n   • Apply: Every 2-3 weeks, diluted\n\n**4. Application Schedule:**\n\n   **Pre-Planting (2-4 weeks before):**\n   • Add compost and aged manure\n   • Test and adjust soil pH\n\n   **At Planting:**\n   • Light application of balanced fertilizer\n   • Bone meal for phosphorus boost\n\n   **Growth Phase:**\n   • Higher nitrogen for leafy growth\n   • Regular liquid feeding\n\n   **Flowering/Fruiting:**\n   • Reduce nitrogen, increase potassium\n   • Add calcium for strong cell walls\n\n**5. Special Considerations:**\n\n   **Heavy Feeders:** Tomatoes, corn, squash\n   • Need more frequent fertilization\n   • Benefit from rich compost base\n\n   **Light Feeders:** Herbs, beans, peas\n   • Can fix their own nitrogen (legumes)\n   • Minimal fertilization needed\n\n   **Container Gardens:**\n   • Use diluted liquid fertilizers\n   • Feed more frequently (weekly)\n   • Ensure good drainage\n\n**Cost-Effective Strategy:**\n• Base: Homemade compost (free)\n• Supplement: Balanced organic granules\n• Boost: Liquid fish emulsion for quick needs\n\n**Pro Tips:**\n• Always water after applying dry fertilizer\n• Feed in early morning or evening\n• Less is often more - avoid over-fertilizing\n• Watch plants for nutrient deficiency signs",
+      "category": "fertilizers",
+      "confidence": 0.97,
+      "language": "english"
+    }
+  ]
+}

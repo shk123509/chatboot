@@ -16,6 +16,8 @@ import Chat from './pages/Chat';
 import CropSearch from './pages/CropSearch';
 import Debug from './pages/Debug';
 import Settings from './pages/Settings';
+import AdvancedChatbot from './pages/AdvancedChatbot';
+import SimpleChatbot from './pages/SimpleChatbot';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -124,6 +126,16 @@ function App() {
           <Route path="/chat" element={
             <ProtectedRoute user={user}>
               <Chat user={user} />
+            </ProtectedRoute>
+          } />
+          <Route path="/advanced-chatbot" element={
+            <ProtectedRoute user={user}>
+              <AdvancedChatbot user={user} />
+            </ProtectedRoute>
+          } />
+          <Route path="/simple-chatbot" element={
+            <ProtectedRoute user={user}>
+              <SimpleChatbot user={user} />
             </ProtectedRoute>
           } />
           <Route path="/crops" element={

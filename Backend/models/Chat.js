@@ -90,7 +90,7 @@ const ChatSessionSchema = new mongoose.Schema({
     userMessages: { type: Number, default: 0 },
     botMessages: { type: Number, default: 0 },
     averageResponseTime: { type: Number, default: 0 }, // in milliseconds
-    satisfactionRating: { type: Number, min: 1, max: 5, default: 0 },
+    satisfactionRating: { type: Number, min: 1, max: 5, default: 3 },
     issuesResolved: { type: Number, default: 0 },
     topicsDiscussed: [{ type: String }]
   },

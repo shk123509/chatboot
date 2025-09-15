@@ -266,7 +266,7 @@ function Signup({ onLogin }) {
             <div className="signup-icon animate-bounce">
               <span>{currentStep === 1 ? '👋' : '🔒'}</span>
             </div>
-            <h1 className="signup-title text-gradient">Join FarmAssist</h1>
+            <h1 className="signup-title text-gradient">Krishi Mitra</h1>
             <p className="signup-subtitle">Start your smart farming journey today</p>
             
             <div className="step-indicator">

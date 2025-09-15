@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Test - Voice & Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+        }
+        .section h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        .file-input {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #0056b3; }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+        .record-btn {
+            background: #dc3545;
+            padding: 15px 25px;
+            font-size: 16px;
+        }
+        .record-btn.recording { background: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Upload Functionality Test</h1>
+        <p><strong>Server:</strong> http://localhost:5000</p>
+
+        <div class="section">
+            <h3>🎤 Voice Recording Test</h3>
+            <p>Test voice recording and upload functionality:</p>
+            <button id="recordBtn" class="btn record-btn" onclick="toggleRecording()">
+                🎤 Start Recording
+            </button>
+            <div id="recordingStatus"></div>
+            <div id="voiceResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h3>📷 Image Upload Test</h3>
+            <p>Test image file upload functionality:</p>
+            <input type="file" id="imageFile" class="file-input" accept="image/*">
+            <input type="text" id="imageQuestion" class="file-input" placeholder="Ask a question about the image...">
+            <button class="btn" onclick="uploadImage()">📷 Upload Image</button>
+            <div id="imageResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h3>💬 Text Message Test</h3>
+            <p>Test text message with spell check:</p>
+            <input type="text" id="textMessage" class="file-input" placeholder="Type a farming question with spelling mistakes..." 
+                   value="My tomato plant has yelow leaves and pest problam">
+            <button class="btn" onclick="sendTextMessage()">💬 Send Message</button>
+            <div id="textResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h3>🔊 TTS Test</h3>
+            <p>Test text-to-speech functionality:</p>
+            <input type="text" id="ttsText" class="file-input" placeholder="Enter text to convert to speech..." 
+                   value="Hello farmer, your tomato plants need nitrogen fertilizer">
+            <button class="btn" onclick="testTTS()">🔊 Generate Audio</button>
+            <div id="ttsResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        // Mock auth token for testing - replace with real login
+        const mockAuthToken = 'test-token-123';
+
+        // Voice Recording Functions
+        async function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    uploadVoice(audioBlob);
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                
+                document.getElementById('recordBtn').innerHTML = '⏹️ Stop Recording';
+                document.getElementById('recordBtn').classList.add('recording');
+                document.getElementById('recordingStatus').innerHTML = '<p>🔴 Recording... Speak your farming question!</p>';
+            } catch (error) {
+                showResult('voiceResult', 'Error accessing microphone: ' + error.message, 'error');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+                
+                document.getElementById('recordBtn').innerHTML = '🎤 Start Recording';
+                document.getElementById('recordBtn').classList.remove('recording');
+                document.getElementById('recordingStatus').innerHTML = '<p>Processing audio...</p>';
+            }
+        }
+
+        async function uploadVoice(audioBlob) {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'test-recording.wav');
+            formData.append('language', 'en');
+
+            try {
+                showResult('voiceResult', 'Uploading voice file...', 'info');
+                
+                const response = await fetch(`${API_BASE}/chatbot/voice`, {
+                    method: 'POST',
+                    headers: {
+                        'auth-token': mockAuthToken
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('voiceResult', 
+                        `✅ Voice Upload Success!\n` +
+                        `Transcription: ${JSON.stringify(data.data.transcription, null, 2)}\n` +
+                        `Response: ${data.data.response}\n` +
+                        `Confidence: ${data.data.confidence}`, 
+                        'success');
+                } else {
+                    showResult('voiceResult', `❌ Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('voiceResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Image Upload Function
+        async function uploadImage() {
+            const fileInput = document.getElementById('imageFile');
+            const questionInput = document.getElementById('imageQuestion');
+            
+            if (!fileInput.files[0]) {
+                showResult('imageResult', '❌ Please select an image file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+            formData.append('question', questionInput.value || 'What can you tell me about this image?');
+            formData.append('language', 'en');
+
+            try {
+                showResult('imageResult', 'Uploading image...', 'info');
+                
+                const response = await fetch(`${API_BASE}/chatbot/image`, {
+                    method: 'POST',
+                    headers: {
+                        'auth-token': mockAuthToken
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('imageResult', 
+                        `✅ Image Upload Success!\n` +
+                        `Analysis: ${data.data.response}\n` +
+                        `Confidence: ${data.data.confidence}\n` +
+                        `Category: ${data.data.imageAnalysis?.category}`, 
+                        'success');
+                } else {
+                    showResult('imageResult', `❌ Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('imageResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Text Message Function
+        async function sendTextMessage() {
+            const messageInput = document.getElementById('textMessage');
+            const message = messageInput.value.trim();
+            
+            if (!message) {
+                showResult('textResult', '❌ Please enter a message', 'error');
+                return;
+            }
+
+            try {
+                showResult('textResult', 'Sending message...', 'info');
+                
+                const response = await fetch(`${API_BASE}/chatbot/message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'auth-token': mockAuthToken
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        language: 'en'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('textResult', 
+                        `✅ Text Message Success!\n` +
+                        `Original: ${data.data.spellCheck?.originalMessage}\n` +
+                        `Corrected: ${data.data.spellCheck?.correctedMessage}\n` +
+                        `Response: ${data.data.response}\n` +
+                        `Confidence: ${data.data.confidence}`, 
+                        'success');
+                } else {
+                    showResult('textResult', `❌ Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('textResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        // TTS Function
+        async function testTTS() {
+            const textInput = document.getElementById('ttsText');
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                showResult('ttsResult', '❌ Please enter text', 'error');
+                return;
+            }
+
+            try {
+                showResult('ttsResult', 'Generating audio...', 'info');
+                
+                const response = await fetch(`${API_BASE}/chatbot/tts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'auth-token': mockAuthToken
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        language: 'en'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('ttsResult', 
+                        `✅ TTS Success!\n` +
+                        `Audio URL: ${data.data.audioUrl}\n` +
+                        `Duration: ${data.data.duration}s\n` +
+                        `Cached: ${data.data.cached}`, 
+                        'success');
+                        
+                    // Play audio
+                    const audio = new Audio(data.data.audioUrl);
+                    audio.play().catch(console.warn);
+                } else {
+                    showResult('ttsResult', `❌ Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('ttsResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Utility function
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧪 Upload Test Page Loaded');
+            console.log('Server:', API_BASE);
+        });
+    </script>
+</body>
+</html>

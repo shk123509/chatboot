@@ -1,0 +1,8 @@
+{
+  "model_name": "all-MiniLM-L6-v2",
+  "chunk_size": 200,
+  "overlap_size": 50,
+  "num_chunks": 8850,
+  "num_problems": 8850,
+  "created_date": "2025-09-14T13:19:41.934533"
+}

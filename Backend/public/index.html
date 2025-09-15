@@ -20,18 +20,238 @@
   </header>
   <main>
     <section>
-      <h2>Smart help for farmers</h2>
-      <p>Ask crop questions and get instant advice powered by ML/LLM.</p>
-      <p>Health: <span id="health">checking...</span></p>
-      <button id="checkHealth">Check API Health</button>
+      <h2>🌾 Smart Help for Farmers</h2>
+      <p>Ask crop questions and get instant advice powered by AI</p>
+      
+      <!-- Basic Chat Interface -->
+      <div class="basic-chat" id="basicChat">
+        <div class="chat-messages" id="chatMessages">
+          <div class="message bot">
+            <div class="message-content">
+              <div class="message-text">
+                👋 Welcome to FarmAssist! I can help you with:
+                <br><br>
+                🌱 Crop growth problems<br>
+                🐛 Pest control<br>
+                🌿 Fertilizer advice<br>
+                💧 Irrigation guidance<br>
+                <br>
+                Ask me anything about farming!
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chat-input-area">
+          <div class="input-container">
+            <input type="text" id="chatInput" placeholder="Ask about farming, crops, diseases..." />
+            <button id="sendBtn">📤 Send</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="quick-links">
+        <a href="/enhanced_chatbot.html" class="enhanced-link">🚀 Try Enhanced Chat</a>
+        <button id="checkHealth">Check System Health</button>
+        <p>Status: <span id="health">checking...</span></p>
+      </div>
     </section>
   </main>
   <script>
-    document.getElementById('checkHealth').onclick = async () => {
-      const res = await fetch('/health');
-      const data = await res.json();
-      document.getElementById('health').textContent = data.status + ' (uptime ' + Math.round(data.uptime) + 's)';
-    };
+    // Basic Chat Functionality
+    const API_BASE = 'http://localhost:5000/api/chatbot';
+    let conversationId = null;
+    
+    // Initialize chat
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🌾 Basic Chat initialized');
+      setupEventListeners();
+    });
+    
+    function setupEventListeners() {
+      const chatInput = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('sendBtn');
+      
+      // Send message on button click
+      sendBtn.addEventListener('click', () => sendMessage());
+      
+      // Send message on Enter key
+      chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+      
+      // Health check button
+      document.getElementById('checkHealth').onclick = async () => {
+        try {
+          const res = await fetch('/health');
+          const data = await res.json();
+          document.getElementById('health').textContent = data.status + ' (uptime ' + Math.round(data.uptime) + 's)';
+        } catch (error) {
+          document.getElementById('health').textContent = 'Error checking health';
+        }
+      };
+    }
+    
+    async function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('sendBtn');
+      const message = chatInput.value.trim();
+      
+      if (!message) {
+        alert('Please enter a message!');
+        return;
+      }
+      
+      // Disable input while sending
+      chatInput.disabled = true;
+      sendBtn.disabled = true;
+      sendBtn.textContent = '🔄 Sending...';
+      
+      try {
+        // Add user message to chat
+        addMessage('user', message);
+        
+        // Clear input
+        chatInput.value = '';
+        
+        // Show typing indicator
+        addTypingIndicator();
+        
+        // Send to API
+        const response = await fetch(`${API_BASE}/message`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: message,
+            conversationId: conversationId
+          })
+        });
+        
+        const data = await response.json();
+        
+        // Remove typing indicator
+        removeTypingIndicator();
+        
+        if (data.success) {
+          conversationId = data.data.conversationId;
+          
+          // Add bot response with spell check info
+          let botResponse = data.data.response;
+          
+          // Add spell check notification if corrections were made
+          if (data.data.spellCheck && data.data.spellCheck.hasCorrections) {
+            const corrections = data.data.spellCheck.corrections.map(c => 
+              `"${c.original}" → "${c.corrected}"`
+            ).join(', ');
+            botResponse += `\n\n📝 Spell corrections: ${corrections}`;
+          }
+          
+          addMessage('bot', botResponse);
+        } else {
+          addMessage('bot', '❌ Sorry, I encountered an error. Please try again.');
+        }
+        
+      } catch (error) {
+        console.error('Error sending message:', error);
+        removeTypingIndicator();
+        addMessage('bot', '❌ Connection error. Please check your internet and try again.');
+      } finally {
+        // Re-enable input
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+        sendBtn.textContent = '📤 Send';
+        chatInput.focus();
+      }
+    }
+    
+    function addMessage(sender, text) {
+      const messagesContainer = document.getElementById('chatMessages');
+      
+      // Create message elements
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${sender}`;
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      
+      const textDiv = document.createElement('div');
+      textDiv.className = 'message-text';
+      textDiv.innerHTML = formatMessage(text);
+      
+      // Force visibility with inline styles
+      messageDiv.style.cssText = 'display: flex !important; visibility: visible !important; opacity: 1 !important; margin-bottom: 16px !important;';
+      contentDiv.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; padding: 12px 16px !important; border-radius: 12px !important;';
+      textDiv.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important; line-height: 1.5 !important; color: inherit !important;';
+      
+      // Set colors based on sender
+      if (sender === 'bot') {
+        contentDiv.style.background = '#3b82f6 !important';
+        contentDiv.style.color = 'white !important';
+        textDiv.style.color = 'white !important';
+      } else {
+        contentDiv.style.background = '#10b981 !important';
+        contentDiv.style.color = 'white !important';
+        textDiv.style.color = 'white !important';
+        messageDiv.style.justifyContent = 'flex-end';
+      }
+      
+      // Assemble message
+      contentDiv.appendChild(textDiv);
+      messageDiv.appendChild(contentDiv);
+      messagesContainer.appendChild(messageDiv);
+      
+      // Force reflow and scroll to bottom
+      messageDiv.offsetHeight;
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      console.log(`💬 Added ${sender} message:`, text.substring(0, 50) + '...');
+    }
+    
+    function addTypingIndicator() {
+      const messagesContainer = document.getElementById('chatMessages');
+      
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message bot typing-message';
+      typingDiv.id = 'typingIndicator';
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'message-content';
+      contentDiv.style.cssText = 'background: #94a3b8 !important; color: white !important; display: block !important; visibility: visible !important; opacity: 1 !important;';
+      
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'typing-indicator';
+      typingIndicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+      
+      contentDiv.appendChild(typingIndicator);
+      typingDiv.appendChild(contentDiv);
+      messagesContainer.appendChild(typingDiv);
+      
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+      const typingIndicator = document.getElementById('typingIndicator');
+      if (typingIndicator) {
+        typingIndicator.remove();
+      }
+    }
+    
+    function formatMessage(text) {
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>');
+    }
+    
+    // Auto-check health on load
+    setTimeout(() => {
+      document.getElementById('checkHealth').click();
+    }, 1000);
   </script>
 </body>
 </html>

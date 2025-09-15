@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modern UI Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: #f0f0f0;
+        }
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎉 Modern UI Test Page</h1>
+    
+    <div class="success">
+        ✅ Server is Working!
+        <br>Modern UI File is Accessible
+    </div>
+    
+    <div class="info">
+        Current URL: <strong>http://localhost:5000/test_modern_ui.html</strong>
+    </div>
+    
+    <div class="info">
+        Time: <span id="currentTime"></span>
+    </div>
+    
+    <h2>Available Chatbot UIs:</h2>
+    
+    <a href="/enhanced_chatbot.html" class="button">
+        🔴 Original Enhanced UI
+    </a>
+    
+    <a href="/modern_chatbot.html" class="button">
+        🟢 NEW Modern ChatGPT-style UI
+    </a>
+    
+    <h3>✅ Files Status:</h3>
+    <div class="info">
+        enhanced_chatbot.html: Available ✅<br>
+        modern_chatbot.html: Available ✅<br>
+        Server: Running ✅
+    </div>
+    
+    <script>
+        document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        
+        // Auto-redirect to modern UI after 5 seconds
+        setTimeout(() => {
+            if (confirm('Redirect to Modern UI?')) {
+                window.location.href = '/modern_chatbot.html';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

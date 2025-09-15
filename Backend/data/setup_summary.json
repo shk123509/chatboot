@@ -1,0 +1,14 @@
+{
+  "setup_date": "2025-09-14T13:19:42.234877",
+  "total_problems": 8850,
+  "total_chunks": 8850,
+  "embedding_dimension": 384,
+  "model_name": "all-MiniLM-L6-v2",
+  "status": "completed",
+  "files_created": [
+    "farmer_problems_dataset.json",
+    "rag_system/chunks_data.json",
+    "rag_system/vector_index.faiss",
+    "rag_system/metadata.json"
+  ]
+}

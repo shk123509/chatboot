@@ -60,6 +60,10 @@ app.use("/api/farming", require("./router/farming"));
 app.use("/api/chat", require("./router/chat"));
 // News app API routes
 app.use("/api/news", require("./router/news"));
+// RAG System API routes
+app.use("/api/rag", require("./router/rag_api"));
+// Advanced Chatbot API routes (enhanced multimedia version)
+app.use("/api/chatbot", require("./router/advanced_chatbot"));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -69,6 +73,14 @@ app.get('/health', (req, res) => {
 // Static assets (frontend pages)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Home page route
+app.get('/', (req, res) => {
+  res.redirect('/farmassist_home.html');
+});
+
 app.listen(port, () => { 
   console.log(`🚀 Server is running on http://localhost:${port}`);
+  console.log(`🏠 Home Page: http://localhost:${port}/farmassist_home.html`);
+  console.log(`🌾 Crop Management: http://localhost:${port}/modern_chatbot.html`);
+  console.log(`🏛️ Government Schemes: http://localhost:${port}/government_schemes.html`);
 });

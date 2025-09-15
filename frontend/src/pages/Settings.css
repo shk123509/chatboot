@@ -1,10 +1,11 @@
 /* Settings Page Styles */
 .settings-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Account for navbar height */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   padding: 20px;
+  margin-top: -80px; /* Compensate for App.css padding-top */
 }
 
 @keyframes gradientShift {

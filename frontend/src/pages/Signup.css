@@ -181,7 +181,7 @@
 
 /* ===== SIGNUP PAGE STYLES ===== */
 .signup-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Account for navbar height */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,6 +191,7 @@
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   overflow: hidden;
+  margin-top: -80px; /* Compensate for App.css padding-top */
 }
 
 .signup-page::before {

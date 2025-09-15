@@ -9,7 +9,7 @@
 /* Hero Section */
 .hero-section {
   text-align: center;
-  padding: 80px 20px;
+  padding: 60px 20px 80px; /* Reduced top padding since App.css handles navbar spacing */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-size: 400% 400%;
   animation: gradientShift 10s ease infinite;

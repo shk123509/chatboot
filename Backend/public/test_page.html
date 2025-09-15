@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page - Server Working</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-card {
+            background: white;
+            color: black;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .success {
+            color: green;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-card">
+        <div class="success">✅ SERVER IS WORKING!</div>
+        <h2>FarmAssist Test Page</h2>
+        <p><strong>Current Time:</strong> <span id="time"></span></p>
+        <p><strong>Server Status:</strong> ✅ Online</p>
+        <p><strong>Files Updated:</strong> ✅ Government Schemes Added</p>
+        
+        <hr>
+        
+        <h3>Test Links:</h3>
+        <a href="/farmassist_home.html" class="button">🏠 Home Page</a>
+        <a href="/enhanced_chatbot.html" class="button">💬 Chatbot</a>
+        <a href="/enhanced_chatbot.html?view=schemes" class="button">🏛️ Schemes</a>
+        
+        <hr>
+        
+        <h3>Cache Clear Instructions:</h3>
+        <p>1. Press <strong>Ctrl + Shift + Delete</strong></p>
+        <p>2. Select "All time" and clear cache</p>
+        <p>3. Press <strong>Ctrl + F5</strong> to force refresh</p>
+    </div>
+
+    <script>
+        document.getElementById('time').textContent = new Date().toLocaleString();
+        
+        // Add click handlers for buttons
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.background = '#333';
+                this.textContent = '⏳ Loading...';
+                
+                setTimeout(() => {
+                    this.style.background = '#4CAF50';
+                    this.textContent = this.textContent.replace('⏳ Loading...', this.getAttribute('data-original') || 'Button');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

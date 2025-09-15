@@ -60,7 +60,7 @@
 
 /* ===== LOGIN PAGE STYLES ===== */
 .login-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Account for navbar height */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,6 +69,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
+  margin-top: -80px; /* Compensate for App.css padding-top */
 }
 
 @keyframes gradientShift {

@@ -46,8 +46,11 @@ function Home({ user }) {
         </div>
         {user ? (
           <div className={`cta-buttons ${animationStarted ? 'animate-fadeInUp animate-delay-700' : 'animate-hidden'}`}>
-            <Link to="/chat" className="btn btn-primary btn-animated hover-glow transition-all">
-              <span>🚀</span> Start Chatting
+            <Link to="/simple-chatbot" className="btn btn-primary btn-animated hover-glow transition-all">
+              <span>🤖</span> AI Farm Assistant
+            </Link>
+            <Link to="/chat" className="btn btn-secondary btn-animated hover-scale transition-all">
+              <span>💬</span> Basic Chat
             </Link>
             <Link to="/about" className="btn btn-secondary btn-animated hover-scale transition-all">
               <span>ℹ️</span> Learn More
