@@ -11,9 +11,10 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background: linear-gradient(135deg, #43a047, #2e7d32);
+    background: linear-gradient(135deg, #3f51b5, #1a237e);
     color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header-left {
@@ -220,6 +221,9 @@
     border-radius: 12px;
     padding: 2px;
     transition: all 0.3s ease;
+    opacity: 1; /* Ensure messages are visible */
+    visibility: visible; /* Explicitly set visibility */
+    z-index: 1; /* Ensure proper stacking */
 }
 
 @keyframes fadeIn {
@@ -321,6 +325,11 @@
     background-color: #f5f5f5;
     padding: 8px 12px;
     border-radius: 6px;
+    opacity: 1; /* Ensure message sources are visible */
+    visibility: visible; /* Explicitly set visibility */
+    display: block; /* Ensure proper display */
+    position: relative; /* Ensure proper positioning */
+    z-index: 2; /* Higher z-index than parent message */
 }
 
 .sources-header {
@@ -330,13 +339,27 @@
 }
 
 .source-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 3px 0;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 12px;
+    font-size: 0.85rem;
+    border-left: 3px solid #3f51b5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    opacity: 1; /* Ensure source items are visible */
+    visibility: visible; /* Explicitly set visibility */
+    display: block; /* Ensure proper display */
 }
 
 .source-category {
     color: #616161;
+}
+
+.source-item:hover {
+    background-color: #e8eaf6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .source-relevance {
@@ -393,9 +416,10 @@
 }
 
 .input-area {
-    padding: 15px 20px;
-    background-color: white;
+    padding: 18px;
     border-top: 1px solid #e0e0e0;
+    background-color: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .image-preview-container {
@@ -443,18 +467,20 @@
 .action-btn {
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     cursor: pointer;
-    padding: 8px;
+    padding: 10px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    color: #3f51b5;
 }
 
 .action-btn:hover {
-    background-color: #f0f2f5;
+    background-color: rgba(63, 81, 181, 0.1);
+    transform: scale(1.1);
 }
 
 .voice-btn.recording {
@@ -472,36 +498,42 @@
     flex: 1;
     border: 1px solid #e0e0e0;
     border-radius: 24px;
-    padding: 12px 20px;
-    font-size: 0.95rem;
+    padding: 12px 18px;
+    font-size: 1rem;
     resize: none;
     max-height: 120px;
     min-height: 48px;
     outline: none;
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
     font-family: inherit;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
 }
 
 .message-input:focus {
-    border-color: #43a047;
+    border-color: #3f51b5;
+    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.15);
 }
 
 .send-btn {
-    background-color: #43a047;
+    background-color: #3f51b5;
     color: white;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 1.2rem;
 }
 
 .send-btn:hover {
-    background-color: #2e7d32;
+    background-color: #1a237e;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .send-btn:disabled {

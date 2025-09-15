@@ -136,6 +136,7 @@ const AdvancedChatbot = ({ user }) => {
             }
 
             if (response.data.success) {
+                console.log('Response data:', response.data.data);
                 const botMessage = {
                     id: Date.now() + 1,
                     role: 'assistant',
@@ -145,7 +146,8 @@ const AdvancedChatbot = ({ user }) => {
                     confidence: response.data.data.confidence,
                     sources: response.data.data.sources
                 };
-
+                
+                console.log('Bot message with sources:', botMessage);
                 setMessages(prev => [...prev, botMessage]);
                 setCurrentConversation({ _id: response.data.data.conversationId });
                 
@@ -313,10 +315,12 @@ const AdvancedChatbot = ({ user }) => {
 
     const formatMessage = (content) => {
         return content.split('\n').map((line, index) => {
+            // Using a more stable key by combining message content with index
+            const stableKey = `line-${line.substring(0, 10)}-${index}`;
             if (line.startsWith('**') && line.endsWith('**')) {
-                return <div key={index} className="message-heading">{line.slice(2, -2)}</div>;
+                return <div key={stableKey} className="message-heading">{line.slice(2, -2)}</div>;
             }
-            return <div key={index} className="message-line">{line}</div>;
+            return <div key={stableKey} className="message-line">{line}</div>;
         });
     };
 
@@ -437,15 +441,19 @@ const AdvancedChatbot = ({ user }) => {
                                             </audio>
                                         </div>
                                     )}
-                                    {message.sources && message.sources.length > 0 && (
+                                    {message.sources && message.sources.length > 0 ? (
                                         <div className="message-sources">
                                             <div className="sources-header">📚 Sources:</div>
                                             {message.sources.slice(0, 2).map((source, index) => (
                                                 <div key={index} className="source-item">
-                                                    <span className="source-category">{source.category}</span>
+                                                    <span className="source-category">{source.category || 'Knowledge Base'}</span>
                                                     <span className="source-relevance">{((source.confidence || source.similarity || 0.7) * 100).toFixed(1)}%</span>
                                                 </div>
                                             ))}
+                                        </div>
+                                    ) : (
+                                        <div className="debug-info" style={{fontSize: '0.8rem', color: '#666', marginTop: '5px'}}>
+                                            No sources available
                                         </div>
                                     )}
                                     <div className="message-timestamp">
