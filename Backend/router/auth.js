@@ -410,4 +410,14 @@ router.post('/reset-password', [
     }
 });
 
+// DEBUG: Test endpoint for settings page
+router.get('/test-settings', fetchuser, (req, res) => {
+    res.json({
+        success: true,
+        message: 'Settings endpoint working',
+        user: req.user,
+        timestamp: new Date().toISOString()
+    });
+});
+
 module.exports = router;

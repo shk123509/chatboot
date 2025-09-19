@@ -78,7 +78,7 @@ const ChatConversationSchema = mongoose.Schema({
     messages: [MessageSchema],
     lastMessage: {
         type: String,
-        maxlength: 2000  // Increased limit for detailed agricultural responses
+        maxlength: 50000  // Increased limit for detailed agricultural responses (enhanced chatbot)
     },
     messagesCount: {
         type: Number,
@@ -143,8 +143,8 @@ ChatConversationSchema.pre('save', function(next) {
     // Update last message
     if (this.messages.length > 0) {
         const lastMessage = this.messages[this.messages.length - 1];
-        this.lastMessage = lastMessage.content.length > 2000 
-            ? lastMessage.content.substring(0, 1997) + '...' 
+        this.lastMessage = lastMessage.content.length > 50000 
+            ? lastMessage.content.substring(0, 49997) + '...' 
             : lastMessage.content;
     }
     

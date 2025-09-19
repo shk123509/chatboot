@@ -12,13 +12,31 @@ const EnhancedImageAnalysis = require('../utils/enhancedImageAnalysis');
 const TextToSpeechService = require('../utils/textToSpeechService');
 const EnhancedVoiceService = require('../utils/enhancedVoiceService');
 const EnhancedKnowledgeBase = require('../utils/enhancedKnowledgeBase');
+const EnhancedResponseGenerator = require('../utils/enhancedResponseGenerator');
 const { checkSpelling } = require('../utils/spellChecker');
 
-// Initialize services
-const imageAnalysis = new EnhancedImageAnalysis();
-const ttsService = new TextToSpeechService();
-const voiceService = new EnhancedVoiceService();
-const knowledgeBase = new EnhancedKnowledgeBase();
+// Initialize services with error handling
+let imageAnalysis, ttsService, voiceService, knowledgeBase, responseGenerator;
+
+try {
+    imageAnalysis = new EnhancedImageAnalysis();
+    ttsService = new TextToSpeechService();
+    voiceService = new EnhancedVoiceService();
+    knowledgeBase = new EnhancedKnowledgeBase();
+    responseGenerator = new EnhancedResponseGenerator();
+    console.log('✅ All enhanced services initialized successfully');
+} catch (error) {
+    console.error('❌ Error initializing enhanced services:', error.message);
+    console.log('🔄 Attempting to continue with available services...');
+    
+    // Initialize what we can
+    try {
+        responseGenerator = new EnhancedResponseGenerator();
+        console.log('✅ Enhanced Response Generator initialized as fallback');
+    } catch (e) {
+        console.error('❌ Critical: Enhanced Response Generator failed to initialize:', e.message);
+    }
+}
 
 // Simple in-memory storage for fallback - replace with MongoDB later
 let conversations = [];
@@ -689,27 +707,99 @@ router.delete('/conversation/:id', fetchuser, async (req, res) => {
 
 async function getEnhancedRAGResponse(message, language = 'en', conversationHistory = []) {
     try {
-        // Get contextual response from enhanced knowledge base
-        const ragResult = knowledgeBase.getContextualResponse(message, conversationHistory, language);
+        console.log(`🧠 Processing enhanced RAG response for: ${message}`);
         
-        if (ragResult && ragResult.confidence > 0.4) {
-            return {
-                response: ragResult.answer,
-                confidence: ragResult.confidence,
-                sources: [{
-                    id: ragResult.id,
-                    category: ragResult.category,
-                    source: ragResult.source,
-                    confidence: ragResult.confidence
-                }]
-            };
-        } else {
-            // Fallback to basic response generation
+        // Safety check: ensure responseGenerator is available
+        if (!responseGenerator) {
+            console.error('❌ Enhanced Response Generator not available, falling back to basic response');
             return generateBasicResponse(message, language);
         }
         
+        // First, try to get contextual response from knowledge base
+        let ragResult = null;
+        if (knowledgeBase && typeof knowledgeBase.getContextualResponse === 'function') {
+            try {
+                ragResult = knowledgeBase.getContextualResponse(message, conversationHistory, language);
+            } catch (kbError) {
+                console.warn('⚠️ Knowledge base error, continuing with enhanced response:', kbError.message);
+            }
+        } else {
+            console.log('📝 Knowledge base not available, generating enhanced response without RAG data');
+        }
+        
+        // Use enhanced response generator for comprehensive farming advice
+        let ragResults = [];
+        if (ragResult && ragResult.confidence > 0.3) {
+            ragResults = [{
+                similarity_score: ragResult.confidence,
+                category: ragResult.category,
+                crop: 'general',
+                problem: message,
+                solution: ragResult.answer,
+                original_id: ragResult.id
+            }];
+        }
+        
+        // Generate comprehensive detailed response (2000+ words)
+        const enhancedResponse = responseGenerator.generateDetailedResponse(
+            message, 
+            ragResults, 
+            language
+        );
+        
+        console.log(`✅ Generated enhanced response: ${enhancedResponse.wordCount} words`);
+        
+        return {
+            response: enhancedResponse.content,
+            confidence: enhancedResponse.confidence,
+            wordCount: enhancedResponse.wordCount,
+            sources: [{
+                id: enhancedResponse.timestamp,
+                category: 'comprehensive_farming_guide',
+                source: 'Enhanced Agricultural Knowledge Base',
+                confidence: enhancedResponse.confidence,
+                wordCount: enhancedResponse.wordCount
+            }]
+        };
+        
     } catch (error) {
-        console.error('Error getting enhanced RAG response:', error);
+        console.error('❌ Error getting enhanced RAG response:', error);
+        // Fallback to enhanced response even without RAG data
+        try {
+            const fallbackResponse = responseGenerator.generateDetailedResponse(
+                message, 
+                [], // Empty RAG results
+                language
+            );
+            
+            return {
+                response: fallbackResponse.content,
+                confidence: 0.7,
+                wordCount: fallbackResponse.wordCount,
+                sources: [{
+                    category: 'comprehensive_farming_guide',
+                    source: 'Enhanced Agricultural Knowledge Base (Fallback)',
+                    confidence: 0.7
+                }]
+            };
+        } catch (fallbackError) {
+            console.error('❌ Fallback response generation failed:', fallbackError);
+            return generateDirectEnhancedResponse(message, language);
+        }
+    }
+}
+
+function generateDirectEnhancedResponse(message, language = 'en') {
+    try {
+        const enhanced = responseGenerator.generateDetailedResponse(message, [], language);
+        return {
+            response: enhanced.content,
+            confidence: enhanced.confidence || 0.7,
+            wordCount: enhanced.wordCount || enhanced.content.split(' ').length,
+            sources: [{ category: 'comprehensive_farming_guide', source: 'Enhanced Agricultural Knowledge Base (Direct)' }]
+        };
+    } catch (e) {
+        console.error('❌ Direct enhanced generation failed, falling back to basic:', e.message);
         return generateBasicResponse(message, language);
     }
 }

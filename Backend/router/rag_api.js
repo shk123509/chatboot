@@ -3,11 +3,15 @@ const router = express.Router();
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const EnhancedResponseGenerator = require('../utils/enhancedResponseGenerator');
 
 /**
  * Farmer RAG API Routes
  * Integrates Python RAG system with Express backend
  */
+
+// Initialize Enhanced Response Generator
+const enhancedGenerator = new EnhancedResponseGenerator();
 
 // Path to Python scripts
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -98,6 +102,79 @@ router.post('/setup-system', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to setup RAG system',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * @route   POST /api/rag/query-enhanced
+ * @desc    Query with enhanced comprehensive response generator (2000+ words)
+ * @access  Public
+ */
+router.post('/query-enhanced', async (req, res) => {
+    try {
+        const { query, language = 'en' } = req.body;
+
+        if (!query) {
+            return res.status(400).json({
+                success: false,
+                message: 'Query is required'
+            });
+        }
+
+        console.log(`🌾 Processing enhanced query: ${query}`);
+
+        // Extract additional options from request
+        const { 
+            includeFormatting = false, 
+            formatType = 'markdown',
+            enableValidation = true,
+            enableChunking = false 
+        } = req.body;
+
+        // Generate comprehensive detailed response using Enhanced Response Generator
+        const enhancedResponse = enhancedGenerator.generateDetailedResponse(query, [], language, {
+            includeFormatting: includeFormatting,
+            formatType: formatType,
+            validateResponse: enableValidation,
+            enableChunking: enableChunking
+        });
+
+        console.log(`✅ Generated comprehensive response: ${enhancedResponse.wordCount} words, confidence: ${enhancedResponse.confidence}`);
+        
+        // Validate response length to ensure no truncation
+        if (enhancedResponse.content.length > 50000) {
+            console.warn('⚠️  Warning: Response exceeds 50k characters, may be truncated in some contexts');
+        }
+
+        res.json({
+            success: true,
+            data: {
+                query: query,
+                response: enhancedResponse.content,
+                metadata: {
+                    wordCount: enhancedResponse.wordCount,
+                    confidence: enhancedResponse.confidence,
+                    enhanced: true,
+                    generatedAt: new Date().toISOString(),
+                    language: language,
+                    queryAnalysis: enhancedResponse.queryAnalysis,
+                    validation: enhancedResponse.validation,
+                    specialCase: enhancedResponse.specialCase,
+                    responseLength: enhancedResponse.content.length,
+                    truncated: enhancedResponse.content.length > 50000
+                },
+                formatted: enhancedResponse.formatted // Will be null if formatting not requested
+            },
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error('❌ Error in enhanced query:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to process enhanced query',
             error: error.message
         });
     }
