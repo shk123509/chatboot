@@ -13,10 +13,11 @@ const TextToSpeechService = require('../utils/textToSpeechService');
 const EnhancedVoiceService = require('../utils/enhancedVoiceService');
 const EnhancedKnowledgeBase = require('../utils/enhancedKnowledgeBase');
 const EnhancedResponseGenerator = require('../utils/enhancedResponseGenerator');
+const SoilExpertAnalyzer = require('../utils/soilExpertPrompt');
 const { checkSpelling } = require('../utils/spellChecker');
 
 // Initialize services with error handling
-let imageAnalysis, ttsService, voiceService, knowledgeBase, responseGenerator;
+let imageAnalysis, ttsService, voiceService, knowledgeBase, responseGenerator, soilExpert;
 
 try {
     imageAnalysis = new EnhancedImageAnalysis();
@@ -24,6 +25,7 @@ try {
     voiceService = new EnhancedVoiceService();
     knowledgeBase = new EnhancedKnowledgeBase();
     responseGenerator = new EnhancedResponseGenerator();
+    soilExpert = new SoilExpertAnalyzer();
     console.log('✅ All enhanced services initialized successfully');
 } catch (error) {
     console.error('❌ Error initializing enhanced services:', error.message);
@@ -113,6 +115,20 @@ const uploadAudio = multer({
         fileSize: 25 * 1024 * 1024 // 25MB limit for audio
     }
 });
+
+// Function to detect soil-related queries
+const isSoilRelatedQuery = (message) => {
+    const soilKeywords = [
+        'soil', 'mitti', 'hard soil', 'yellow', 'yellowing', 'nutrient', 'ph', 'acidic', 'alkaline',
+        'compaction', 'waterlog', 'drainage', 'salt', 'organic matter', 'fertility', 'nitrogen',
+        'phosphorus', 'potassium', 'deficiency', 'lime', 'gypsum', 'compost', 'manure',
+        'soil test', 'hard ground', 'poor growth', 'stunted', 'leaf burn', 'purple leaves',
+        'brown edges', 'root rot', 'wilting', 'drought', 'dry soil', 'cracked soil'
+    ];
+    
+    const msg = message.toLowerCase();
+    return soilKeywords.some(keyword => msg.includes(keyword));
+};
 
 // Utility function to run Python scripts
 const runPythonScript = (scriptPath, args = [], input = null) => {
@@ -207,8 +223,24 @@ router.post('/message', fetchuser, async (req, res) => {
         const spellCheckResult = checkSpelling(message, language);
         const correctedMessage = spellCheckResult.correctedMessage;
         
-        // Get RAG response using enhanced knowledge base
-        const ragResponse = await getEnhancedRAGResponse(correctedMessage, language, conversation.messages);
+// Check if this is a soil-related query and use soil expert
+        let ragResponse;
+        if (isSoilRelatedQuery(correctedMessage)) {
+            console.log('🌱 Using Soil Expert for specialized analysis');
+            const soilAnalysis = soilExpert.formatSoilExpertResponse(correctedMessage);
+            ragResponse = {
+                response: soilAnalysis,
+                confidence: 0.9,
+                sources: [{
+                    id: 'soil_expert',
+                    category: 'soil_analysis',
+                    title: 'Agricultural Soil Expert System'
+                }]
+            };
+        } else {
+            // Get RAG response using enhanced knowledge base
+            ragResponse = await getEnhancedRAGResponse(correctedMessage, language, conversation.messages);
+        }
         
         // Generate audio response if requested or for voice queries
         let audioResponse = null;
