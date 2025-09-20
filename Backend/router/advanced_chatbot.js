@@ -247,16 +247,25 @@ router.post('/message', fetchuser, async (req, res) => {
         conversation.lastMessage = ragResponse.response;
         conversation.updatedAt = new Date();
 
-        await conversation.save();
+        // Save with timeout handling
+        let savedConversationId = conversation._id;
+        try {
+            await conversation.save();
+            console.log('✅ Conversation saved successfully');
+        } catch (saveError) {
+            console.warn('⚠️ Failed to save conversation, continuing with response:', saveError.message);
+            // Generate a temporary ID if save failed
+            savedConversationId = 'temp_' + Date.now();
+        }
 
         res.json({
             success: true,
             data: {
-                conversationId: conversation._id,
+                conversationId: savedConversationId,
                 response: ragResponse.response,
                 confidence: ragResponse.confidence,
                 sources: ragResponse.sources,
-                messageId: botMessage._id,
+                messageId: botMessage._id || 'temp_msg_' + Date.now(),
                 timestamp: botMessage.timestamp,
                 spellCheck: spellCheckResult,
                 audioResponse: audioResponse,
@@ -381,6 +390,7 @@ router.post('/image', fetchuser, uploadImage.single('image'), async (req, res) =
             console.log('✅ Image analysis conversation saved successfully');
         } catch (saveError) {
             console.warn('⚠️ Failed to save image conversation, continuing with response:', saveError.message);
+            // Continue without failing the request
         }
 
         res.json({
